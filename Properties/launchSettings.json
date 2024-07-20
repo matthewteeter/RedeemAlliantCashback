@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RedeemAlliantCashback": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
