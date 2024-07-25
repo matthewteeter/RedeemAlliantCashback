@@ -36,16 +36,19 @@ await page.Locator("#ctl00_pagePlaceholder_txt_password_new").PressAsync("Enter"
 await DetectSecurityQuestionAndSetAnswer(config);
 await page.GetByRole(AriaRole.Button, new() { Name = "Continue" }).ClickAsync();
 await page.GetByRole(AriaRole.Link, new() { Name = "No thanks. I want to keep" }).ClickAsync();
-Console.WriteLine("Clicking Cashback Visa Signature and Manage Account...");
+Console.WriteLine("Clicking Cashback Visa Signature...");
 await page.GetByRole(AriaRole.Link, new() { Name = "Cashback Visa Signature C..." }).ClickAsync();
+Console.WriteLine("Clicking Manage Account...");
 await page.GetByRole(AriaRole.Button, new() { Name = "Manage Account" }).ClickAsync();
+Console.WriteLine("Clicking Alliant Cashback...");
 //Clicking Alliant Cashback opens a new tab, which Playwright tracks using a new Page
 var newPage = await context.RunAndWaitForPageAsync(async () =>
 {
     await page.GetByRole(AriaRole.Link, new() { Name = "Alliant Cashback" }).ClickAsync();
 });
-await Task.Delay(5000); //helps avoid CSRF error
+await Task.Delay(10000); //helps avoid CSRF error, and needed to avoid timeout in docker
 Console.WriteLine($"Tabs: {browser.Contexts[0].Pages.Count}");
+await VerifyCashExceedsMinimum();
 await newPage.GetByRole(AriaRole.Button, new() { Name = "Next" }).ClickAsync();
 Console.WriteLine("Clicked Next...");
 
@@ -105,4 +108,16 @@ async Task DetectSecurityQuestionAndSetAnswer(IConfiguration config)
         await page.Locator($"#ctl00_pagePlaceholder_SecurityQuestionUserControl_{selectorToSupplyAnswer}").SelectOptionAsync(new[] { answer });
     }
     Console.WriteLine("Finished setting answer");
+}
+
+async Task VerifyCashExceedsMinimum()
+{
+    string available = await newPage.Locator($"#headerAvailableBalance").InnerTextAsync();
+    Console.WriteLine($"Available cashback: {available}"); //$x.yz
+    decimal parsed = decimal.Parse(available[1..]);
+    if (parsed < 50)
+    {
+        Console.WriteLine($"Not enough cashback to redeem ($50); exiting with 0");
+        Environment.Exit(0);
+    }
 }
