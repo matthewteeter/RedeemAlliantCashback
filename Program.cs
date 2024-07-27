@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HcpVaultSecretsConfigProvider;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Playwright;
@@ -16,8 +17,7 @@ bool inDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"
 Console.WriteLine(!inDocker ? "Starting Alliant Cashback Redemption..." : "Starting Alliant Cashback Redemption in headless mode...");
 using IHost host = Host.CreateDefaultBuilder(args)
                        .UseEnvironment("Development") //enable user secrets in Development for local overrides
-                       .Build();
-                       //.ConfigureAppConfiguration(config => config.AddHcpVaultSecretsConfiguration(config.Build())).Build();
+                       .ConfigureAppConfiguration(config => config.AddHcpVaultSecretsConfiguration(config.Build())).Build();
 // if running locally, you can set the parameters using dotnet user-secrets. If docker, pass in via Env Vars.
 IConfiguration config = host.Services.GetRequiredService<IConfiguration>();
 await using var browser = await b.LaunchAsync(new BrowserTypeLaunchOptions { Headless = inDocker });
