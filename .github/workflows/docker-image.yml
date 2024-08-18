@@ -16,3 +16,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag synerynx/redeemalliantcashback:1.0.${{ github.run_number }} --tag synerynx/redeemalliantcashback:latest
+    - name: Push
+      run: docker push synerynx/redeemalliantcashback:1.0.${{ github.run_number }}
+    - name: Push latest
+      run: docker push synerynx/redeemalliantcashback:latest
