@@ -27,7 +27,7 @@ var page = await context.NewPageAsync();
 Console.WriteLine("Going to homepage...");
 await page.GotoAsync("https://www.alliantcreditunion.org/");
 Console.WriteLine("Clicking Login...");
-await page.GetByRole(AriaRole.Link, new() { Name = "Secure Log In " }).ClickAsync();
+await page.GetByRole(AriaRole.Link, new() { Name = "Log In" }).ClickAsync();
 Console.WriteLine("Logging in....");
 await page.Locator("#ctl00_pagePlaceholder_txt_username_new").FillAsync(config["AlliantUsername"]);
 await page.Locator("#ctl00_pagePlaceholder_txt_password_new").FillAsync(config["Password"]);
@@ -35,7 +35,14 @@ await page.Locator("#ctl00_pagePlaceholder_txt_password_new").PressAsync("Enter"
 
 await DetectSecurityQuestionAndSetAnswer(config);
 await page.GetByRole(AriaRole.Button, new() { Name = "Continue" }).ClickAsync();
-await page.GetByRole(AriaRole.Link, new() { Name = "No thanks. I want to keep" }).ClickAsync();
+try
+{
+    await page.GetByRole(AriaRole.Link, new() { Name = "No thanks. I want to keep" }).ClickAsync();
+}
+catch(TimeoutException te)
+{
+    //ignore, in case it is not shown.
+}
 Console.WriteLine("Clicking Cashback Visa Signature...");
 await page.GetByRole(AriaRole.Link, new() { Name = "Cashback Visa Signature C..." }).ClickAsync();
 Console.WriteLine("Clicking Manage Account...");
