@@ -12,6 +12,7 @@ var b = playwright.Firefox;
 if (args.Any() && args?[0] == "install")
 {
     Environment.Exit(Microsoft.Playwright.Program.Main(new[] { "install", b.Name }));
+    //although this command supports --with-deps to include OS deps, it installs more than we need and results in 1.4GB image size.
 }
 bool inDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
 Console.WriteLine(!inDocker ? "Starting Alliant Cashback Redemption..." : "Starting Alliant Cashback Redemption in headless mode...");
@@ -28,7 +29,7 @@ Console.WriteLine("Going to homepage...");
 await page.GotoAsync("https://www.alliantcreditunion.org/");
 Console.WriteLine("Clicking Login...");
 await page.GetByRole(AriaRole.Link, new() { Name = "Log In" }).ClickAsync();
-Console.WriteLine("Logging in....");
+Console.WriteLine($"Logging in and setting user to {config["AlliantUsername"]}...");
 await page.Locator("#ctl00_pagePlaceholder_txt_username_new").FillAsync(config["AlliantUsername"]);
 await page.Locator("#ctl00_pagePlaceholder_txt_password_new").FillAsync(config["Password"]);
 await page.Locator("#ctl00_pagePlaceholder_txt_password_new").PressAsync("Enter");
