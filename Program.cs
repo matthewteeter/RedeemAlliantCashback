@@ -21,6 +21,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
                        .ConfigureAppConfiguration(config => config.AddHcpVaultSecretsConfiguration(config.Build())).Build();
 // if running locally, you can set the parameters using dotnet user-secrets. If docker, pass in via Env Vars.
 IConfiguration config = host.Services.GetRequiredService<IConfiguration>();
+ValidateRequiredParametersSupplied(config);
 await using var browser = await b.LaunchAsync(new BrowserTypeLaunchOptions { Headless = inDocker });
 var context = await browser.NewContextAsync();
 var page = await context.NewPageAsync();
@@ -127,5 +128,21 @@ async Task VerifyCashExceedsMinimum()
     {
         Console.WriteLine($"Not enough cashback to redeem ($50); exiting with 0");
         Environment.Exit(0);
+    }
+}
+
+void ValidateRequiredParametersSupplied(IConfiguration config)
+{
+    if (string.IsNullOrWhiteSpace(config["AlliantUsername"]))
+    {
+        throw new ApplicationException("AlliantUsername missing!");
+    }
+    else if (string.IsNullOrWhiteSpace(config["Password"]))
+    {
+        throw new ApplicationException("Password missing!");
+    }
+    else if (string.IsNullOrWhiteSpace(config["Email"]))
+    {
+        throw new ApplicationException("Email missing!");
     }
 }
