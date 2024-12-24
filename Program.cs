@@ -64,7 +64,7 @@ Console.WriteLine("Clicked Next...");
 await newPage.GetByLabel("Confirm email address*").FillAsync(config["Email"]);
 await newPage.GetByRole(AriaRole.Button, new() { Name = "Continue" }).ClickAsync();
 Console.WriteLine("Clicked Continue...");
-
+await Task.Delay(15000);
 await newPage.GetByRole(AriaRole.Button, new() { Name = "order" }).ClickAsync();//place my order
 Console.WriteLine("Cashback redeemed!");
 
