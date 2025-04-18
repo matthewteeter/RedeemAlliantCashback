@@ -45,6 +45,7 @@ catch(TimeoutException te)
 {
     //ignore, in case it is not shown.
 }
+await Task.Delay(10000);
 Console.WriteLine("Clicking Cashback Visa Signature...");
 await page.GetByRole(AriaRole.Link, new() { Name = "Cashback Visa Signature C..." }).ClickAsync();
 Console.WriteLine("Clicking Manage Account...");
